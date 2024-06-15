@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Instascan</title>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/webrtc-adapter/3.3.3/adapter.min.js"></script>
+    <script type="text/javascript" src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
+    <script type="text/javascript">
+function scan(){
+	  document.getElementById("disdiv").style.display="block";
+      let scanner = new this.Instascan.Scanner({ video: document.getElementById('preview') });
+      scanner.addListener('scan', function (content) {
+    	  document.getElementById('target').value = content;
+    	  document.getElementById("disdiv").style.display="none";
+    	  document.getElementById('msg').value = "QRコードを読み取りました。";
+    	  scanner.stop();
+      });
+      Instascan.Camera.getCameras().then(function (cameras) {
+        if (cameras.length > 0) {
+          scanner.start(cameras[0]);
+        } else {
+          console.error('No cameras found.');
+        }
+      }).catch(function (e) {
+        console.error(e);
+      });
+}
+    </script>
+  </head>
+  <body>
+    <div id="disdiv" style="display:none">
+    <video id="preview" width="300" height="300"></video>
+    </div>
+    <font id="msg" color="blue"></font>
+    <input type="text" id="target" />
+    <button id="scanbutton" onclick="scan()">QRコード読取</button>
+
+  </body>
+</html>

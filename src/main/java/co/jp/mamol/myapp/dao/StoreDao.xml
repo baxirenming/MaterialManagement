@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="co.jp.mamol.myapp.dao.StoreDao">
+	<select id="getSizaiById"
+		resultType="co.jp.mamol.myapp.dto.SizaiDto">
+	select s.id,s.name,s.num,s.souko_id,sou.name as souko_name,s.category_id,c.name as category_name,s.request_user_id,u.name as request_user_name ,s.request_dept_id,d.name as request_dept_name,s.status,sta.name as status_name,to_char(request_date,'yyyy-mm-dd') as request_date,to_char(order_date,'yyyy-mm-dd') as order_date,to_char(delivery_date,'yyyy-mm-dd') as delivery_date,to_char(instore_date,'yyyy-mm-dd') as instore_date,to_char(outstore_date,'yyyy-mm-dd') as outstore_date,s.note
+	from sizai s
+	inner join category c on s.category_id = c.id
+	inner join users u on s.request_user_id = u.id
+	inner join department d on s.request_dept_id = d.id
+	inner join status sta on s.status = sta.code
+	left  join souko sou on s.souko_id = sou.id
+	where s.id = #{id}
+	</select>
+	<select id="getSoukoList"
+		resultType="co.jp.mamol.myapp.dto.SoukoDto">
+	select id,name from souko
+	order by id
+	</select>
+	<update id="InStoreAct" parameterType="co.jp.mamol.myapp.dto.SizaiDto">
+	update sizai
+	set SOUKO_ID = #{souko_id},
+		INSTORE_DATE = sysdate,
+		STATUS = '6'
+	where id = #{id}
+	</update>
+
+	<update id="OutStoreAct" parameterType="co.jp.mamol.myapp.dto.SizaiDto">
+	update sizai
+	set outstore_date = sysdate,
+		STATUS = '7'
+	where id = #{id}
+	</update>
+</mapper>
